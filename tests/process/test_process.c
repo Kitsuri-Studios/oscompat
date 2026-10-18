@@ -10,7 +10,7 @@ int main(void) {
 	int exitCode = -12345;
 
 #if defined(_WIN32)
-	const char* captureArgv[] = { "cmd", "/c", "<nul set /p =abc & exit 7", NULL };
+	const char* captureArgv[] = { "cmd", "/c", "<nul set /p =abc&exit 7", NULL };
 	const char* exitArgv[] = { "cmd", "/c", "exit 7", NULL };
 	const char* emptyArgv[] = { "cmd", "/c", "exit 0", NULL };
 	const char* missingArgv[] = { "oscompat_no_such_program_zzz", NULL };

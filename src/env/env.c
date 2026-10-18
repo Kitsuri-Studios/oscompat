@@ -120,7 +120,6 @@ int os_environ_count(void) {
 }
 
 const char* os_environ_get(int index) {
-	int i;
 	if (index < 0) {
 		return NULL;
 	}
@@ -147,14 +146,17 @@ const char* os_environ_get(int index) {
 		return NULL;
 	}
 #else
-	if (environ == NULL) {
-		return NULL;
-	}
-	for (i = 0; i <= index; i++) {
-		if (environ[i] == NULL) {
+	{
+		int i;
+		if (environ == NULL) {
 			return NULL;
 		}
+		for (i = 0; i <= index; i++) {
+			if (environ[i] == NULL) {
+				return NULL;
+			}
+		}
+		return environ[index];
 	}
-	return environ[index];
 #endif
 }

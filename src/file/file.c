@@ -170,6 +170,7 @@ int os_write_file(const char* path, const void* data, size_t size) {
 int os_mkdir_p(const char* path) {
 	char* copy;
 	size_t len;
+	size_t start = 0;
 	size_t i;
 
 	if (path == NULL || path[0] == '\0') {
@@ -183,18 +184,35 @@ int os_mkdir_p(const char* path) {
 		return -1;
 	}
 	memcpy(copy, path, len + 1);
-	for (i = 1; i <= len; i++) {
+	if (len >= 2 && (copy[0] == '/' || copy[0] == '\\') && (copy[1] == '/' || copy[1] == '\\')) {
+		size_t k = 2;
+		while (copy[k] != '\0' && copy[k] != '/' && copy[k] != '\\') {
+			k++;
+		}
+		if (copy[k] != '\0') {
+			k++;
+			while (copy[k] != '\0' && copy[k] != '/' && copy[k] != '\\') {
+				k++;
+			}
+		}
+		start = k;
+	}
+	for (i = start + 1; i <= len; i++) {
 		if (copy[i] == '/' || copy[i] == '\\' || copy[i] == '\0') {
 			char saved = copy[i];
 			copy[i] = '\0';
-			if (copy[0] != '\0') {
-				if (!CreateDirectoryA(copy, NULL)) {
-					DWORD code = GetLastError();
-					if (code != ERROR_ALREADY_EXISTS) {
+			if (copy[0] != '\0' && copy[i - 1] != ':') {
+				DWORD attr = GetFileAttributesA(copy);
+				if (attr == INVALID_FILE_ATTRIBUTES) {
+					if (!CreateDirectoryA(copy, NULL) && GetLastError() != ERROR_ALREADY_EXISTS) {
 						os_set_system_error();
 						free(copy);
 						return -1;
 					}
+				} else if (!(attr & FILE_ATTRIBUTE_DIRECTORY)) {
+					free(copy);
+					errno = ENOTDIR;
+					return -1;
 				}
 			}
 			copy[i] = saved;

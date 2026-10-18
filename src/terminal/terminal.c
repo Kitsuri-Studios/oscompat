@@ -18,6 +18,10 @@
 #include <io.h>
 
 int os_isatty(int fd) {
+	if (fd < 0) {
+		errno = EBADF;
+		return 0;
+	}
 	return _isatty(fd) ? 1 : 0;
 }
 
@@ -26,6 +30,10 @@ int os_tty_size(int fd, int* cols, int* rows) {
 	HANDLE handle;
 	if (cols == NULL || rows == NULL) {
 		errno = EINVAL;
+		return -1;
+	}
+	if (fd < 0) {
+		errno = EBADF;
 		return -1;
 	}
 	handle = (HANDLE)_get_osfhandle(fd);
