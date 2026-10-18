@@ -1,0 +1,12 @@
+build*/
+out/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+*.obj
+*.pdb
+compile_commands.json
+.cache/

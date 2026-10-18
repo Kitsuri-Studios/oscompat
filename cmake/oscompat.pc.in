@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: oscompat
+Description: Cross-platform portability layer for C
+Version: @PROJECT_VERSION@
+Libs: -L${libdir} -loscompat
+Libs.private:@OSCOMPAT_PC_LIBS@
+Cflags: -I${includedir}

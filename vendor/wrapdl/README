@@ -1,0 +1,24 @@
+
+WrapDL is a small C library that wraps dynamic linker.
+
+On Linux, macOS, and Windows it uses the normal system loader (dlopen,
+LoadLibrary, etc.) with one simple API.
+
+On Android it adds extra behavior from xDL-style code: better symbol lookup
+on already-loaded libraries, and optional linker namespace bypass for
+loading libs outside the app sandbox.
+
+Public header: include/wrapdl.h
+
+Build:
+  cmake -B build
+  cmake --build build
+
+Or:
+  make build
+  make linux-test
+
+Android sample app: tests/android/wrapdltest
+
+License: BSD 3-Clause - see LICENSE
+Credits: see AUTHORS

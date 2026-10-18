@@ -1,0 +1,19 @@
+WrapDL authors and upstream code credits
+
+Kitsuri Studio
+  WrapDL library (2026)
+
+Kelun Cai (caikelun@gmail.com)
+  xDL / HexHacking Team - Android dlopen/dlsym/dl_iterate logic (MIT)
+  https://github.com/hexhacking/xDL
+
+Billy Laws (@bylaws)
+  liblinkernsbypass - linker namespace bypass approach (BSD-2-Clause)
+  https://github.com/bylaws/liblinkernsbypass
+
+GX (@dreamguxiang)
+   Help with android linker name space researching
+
+The Android Open Source Project
+  android_namespace_t layout reference (AOSP header)
+  https://source.android.com/
