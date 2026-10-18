@@ -6,18 +6,46 @@ on:
   pull_request:
 
 jobs:
-  build:
-    name: ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+  linux:
+    name: linux / ${{ matrix.name }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        include:
+          - { name: gcc-debug, cc: gcc, build_type: Debug, cflags: "" }
+          - { name: gcc-release, cc: gcc, build_type: Release, cflags: "" }
+          - { name: gcc-werror, cc: gcc, build_type: Debug, cflags: "-Werror" }
+          - { name: gcc-sanitize, cc: gcc, build_type: Debug, cflags: "-fsanitize=address,undefined -fno-omit-frame-pointer -g" }
+          - { name: clang-debug, cc: clang, build_type: Debug, cflags: "" }
+          - { name: clang-release, cc: clang, build_type: Release, cflags: "" }
+          - { name: clang-werror, cc: clang, build_type: Debug, cflags: "-Werror" }
+    env:
+      CC: ${{ matrix.cc }}
+      CFLAGS: ${{ matrix.cflags }}
     steps:
       - uses: actions/checkout@v4
       - name: Configure
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
       - name: Build
-        run: cmake --build build --config Release
+        run: cmake --build build --parallel
       - name: Test
-        run: ctest --test-dir build --output-on-failure -C Release
+        run: ctest --test-dir build --output-on-failure
+
+  windows:
+    name: windows / ${{ matrix.name }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: msvc-debug, build_type: Debug }
+          - { name: msvc-release, build_type: Release }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+      - name: Build
+        run: cmake --build build --config ${{ matrix.build_type }} --parallel
+      - name: Test
+        run: ctest --test-dir build --output-on-failure -C ${{ matrix.build_type }}

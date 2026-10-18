@@ -19,10 +19,10 @@ static void testMemmem(void) {
 	TEST_ASSERT(os_memmem(hay, sizeof(hay) - 1, "xyz", 3) == NULL);
 	TEST_ASSERT(os_memmem(hay, 3, needle, sizeof(needle) - 1) == NULL);
 	TEST_ASSERT(os_memmem(hay, sizeof(hay) - 1, hay, sizeof(hay) - 1) == (const void*)hay);
-	TEST_ASSERT(os_memmem("aaaaab", 6, "aab", 3) == (const void*)("aaaaab" + 3));
-	TEST_ASSERT(os_memmem("abcabc", 6, "bc", 2) == (const void*)("abcabc" + 1));
-	TEST_ASSERT(os_memmem("abcabc", 6, "c", 1) == (const void*)("abcabc" + 2));
-	TEST_ASSERT(os_memmem("abcabc", 6, "cab", 3) == (const void*)("abcabc" + 2));
+	TEST_ASSERT(os_memmem("aaaaab", 6, "aab", 3) == (const void*)&"aaaaab"[3]);
+	TEST_ASSERT(os_memmem("abcabc", 6, "bc", 2) == (const void*)&"abcabc"[1]);
+	TEST_ASSERT(os_memmem("abcabc", 6, "c", 1) == (const void*)&"abcabc"[2]);
+	TEST_ASSERT(os_memmem("abcabc", 6, "cab", 3) == (const void*)&"abcabc"[2]);
 	TEST_ASSERT(os_memmem("abc", 3, "abcd", 4) == NULL);
 	TEST_ASSERT(os_memmem(bin, sizeof(bin), pat, sizeof(pat)) == (const void*)(bin + 3));
 	TEST_ASSERT(os_memmem(bin, sizeof(bin), "\0e", 2) == (const void*)(bin + 5));
@@ -54,8 +54,8 @@ static void testMemrchr(void) {
 	TEST_ASSERT(os_memrchr(s, 'a', 0) == NULL);
 	TEST_ASSERT(os_memrchr(s, 'a', 3) == (const void*)s);
 	TEST_ASSERT(os_memrchr(s, 'a', 1) == (const void*)s);
-	TEST_ASSERT(os_memrchr("ab\0c", '\0', 4) == (const void*)("ab\0c" + 2));
-	TEST_ASSERT(os_memrchr("ab\0c", 'c', 4) == (const void*)("ab\0c" + 3));
+	TEST_ASSERT(os_memrchr("ab\0c", '\0', 4) == (const void*)&"ab\0c"[2]);
+	TEST_ASSERT(os_memrchr("ab\0c", 'c', 4) == (const void*)&"ab\0c"[3]);
 
 #if defined(__GLIBC__)
 	{
@@ -96,8 +96,6 @@ static void testStrchrnul(void) {
 }
 
 static void testStrCaseCmp(void) {
-	static const char* const words[] = { "", "a", "A", "ab", "AB", "abc", "ABC", "abd", "hello", "HELLO", "Hellz" };
-
 	TEST_INT_EQ(0, os_strcasecmp("", ""));
 	TEST_INT_EQ(0, os_strcasecmp("Hello", "hello"));
 	TEST_INT_EQ(0, os_strcasecmp("HELLO", "hello"));
@@ -121,6 +119,7 @@ static void testStrCaseCmp(void) {
 
 #if defined(__GLIBC__)
 	{
+		static const char* const words[] = { "", "a", "A", "ab", "AB", "abc", "ABC", "abd", "hello", "HELLO", "Hellz" };
 		size_t i;
 
 		for (i = 0; i < sizeof(words) / sizeof(words[0]); i++) {

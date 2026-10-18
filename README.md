@@ -96,6 +96,11 @@ cmake --build build
 ctest --test-dir build --output-on-failure
 ```
 
+The suite covers three layers: unit tests per domain, usage tests that exercise
+the library end to end (including loading a real plugin module through the
+`dynlib` domain), and a package test that installs the library and builds and
+runs a consumer against it through `find_package`.
+
 ## Portability notes
 
 - POSIX is the reference. Where a platform lacks a primitive such as `memmem`,

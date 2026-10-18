@@ -69,13 +69,21 @@ if(ANDROID)
 endif()
 
 if(MSVC)
-	target_compile_options(oscompat PRIVATE /W4)
+	set(OSCOMPAT_WARNINGS /W4)
 else()
-	target_compile_options(oscompat PRIVATE -Wall -Wextra)
+	set(OSCOMPAT_WARNINGS -Wall -Wextra)
 endif()
+target_compile_options(oscompat PRIVATE ${OSCOMPAT_WARNINGS})
+target_compile_options(oscompat_wrapdl PRIVATE ${OSCOMPAT_WARNINGS})
 
 if(OSCOMPAT_BUILD_TESTS)
 	enable_testing()
+
+	add_library(oscompat_usage_plugin MODULE
+		"${CMAKE_CURRENT_SOURCE_DIR}/tests/usage/plugin/usage_plugin.c")
+	set_target_properties(oscompat_usage_plugin PROPERTIES PREFIX "")
+	target_compile_options(oscompat_usage_plugin PRIVATE ${OSCOMPAT_WARNINGS})
+
 	file(GLOB_RECURSE OSCOMPAT_TEST_SOURCES CONFIGURE_DEPENDS
 		"${CMAKE_CURRENT_SOURCE_DIR}/tests/*/test_*.c")
 	foreach(oscompatTestSource ${OSCOMPAT_TEST_SOURCES})
@@ -84,8 +92,28 @@ if(OSCOMPAT_BUILD_TESTS)
 		target_link_libraries(oscompat_${oscompatTestName} PRIVATE oscompat)
 		target_include_directories(oscompat_${oscompatTestName} PRIVATE
 			${CMAKE_CURRENT_SOURCE_DIR}/tests)
-		add_test(NAME ${oscompatTestName} COMMAND oscompat_${oscompatTestName})
+		target_compile_options(oscompat_${oscompatTestName} PRIVATE ${OSCOMPAT_WARNINGS})
+		if(oscompatTestName STREQUAL "test_usage_dynlib")
+			add_dependencies(oscompat_${oscompatTestName} oscompat_usage_plugin)
+			add_test(NAME ${oscompatTestName}
+				COMMAND oscompat_${oscompatTestName} $<TARGET_FILE:oscompat_usage_plugin>)
+		else()
+			add_test(NAME ${oscompatTestName} COMMAND oscompat_${oscompatTestName})
+		endif()
 	endforeach()
+
+	if(NOT CMAKE_CROSSCOMPILING)
+		add_test(NAME usage_package
+			COMMAND ${CMAKE_COMMAND}
+				"-DOSCOMPAT_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}"
+				"-DOSCOMPAT_C_FLAGS=${CMAKE_C_FLAGS}"
+				"-DUSAGE_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/tests/usage/consumer"
+				"-DUSAGE_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/usage-prefix"
+				"-DUSAGE_BUILD_DIR=${CMAKE_CURRENT_BINARY_DIR}/usage-consumer"
+				"-DCONFIG=$<CONFIG>"
+				"-DCTEST_COMMAND=${CMAKE_CTEST_COMMAND}"
+				-P "${CMAKE_CURRENT_SOURCE_DIR}/tests/usage/package_test.cmake")
+	endif()
 endif()
 
 install(TARGETS oscompat EXPORT oscompatTargets
