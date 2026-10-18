@@ -10,6 +10,8 @@
 static void testMemmem(void) {
 	static const char hay[] = "hello world";
 	static const char needle[] = "world";
+	static const char repeated[] = "aaaaab";
+	static const char abc[] = "abcabc";
 	static const unsigned char bin[] = { 'a', 'b', 0, 'c', 'd', 0, 'e', 'f' };
 	static const unsigned char pat[] = { 'c', 'd', 0 };
 
@@ -19,10 +21,10 @@ static void testMemmem(void) {
 	TEST_ASSERT(os_memmem(hay, sizeof(hay) - 1, "xyz", 3) == NULL);
 	TEST_ASSERT(os_memmem(hay, 3, needle, sizeof(needle) - 1) == NULL);
 	TEST_ASSERT(os_memmem(hay, sizeof(hay) - 1, hay, sizeof(hay) - 1) == (const void*)hay);
-	TEST_ASSERT(os_memmem("aaaaab", 6, "aab", 3) == (const void*)&"aaaaab"[3]);
-	TEST_ASSERT(os_memmem("abcabc", 6, "bc", 2) == (const void*)&"abcabc"[1]);
-	TEST_ASSERT(os_memmem("abcabc", 6, "c", 1) == (const void*)&"abcabc"[2]);
-	TEST_ASSERT(os_memmem("abcabc", 6, "cab", 3) == (const void*)&"abcabc"[2]);
+	TEST_ASSERT(os_memmem(repeated, 6, "aab", 3) == (const void*)(repeated + 3));
+	TEST_ASSERT(os_memmem(abc, 6, "bc", 2) == (const void*)(abc + 1));
+	TEST_ASSERT(os_memmem(abc, 6, "c", 1) == (const void*)(abc + 2));
+	TEST_ASSERT(os_memmem(abc, 6, "cab", 3) == (const void*)(abc + 2));
 	TEST_ASSERT(os_memmem("abc", 3, "abcd", 4) == NULL);
 	TEST_ASSERT(os_memmem(bin, sizeof(bin), pat, sizeof(pat)) == (const void*)(bin + 3));
 	TEST_ASSERT(os_memmem(bin, sizeof(bin), "\0e", 2) == (const void*)(bin + 5));
@@ -46,6 +48,7 @@ static void testMemmem(void) {
 
 static void testMemrchr(void) {
 	static const char s[] = "abcabc";
+	static const char withNul[] = "ab\0c";
 
 	TEST_ASSERT(os_memrchr(s, 'b', 6) == (const void*)(s + 4));
 	TEST_ASSERT(os_memrchr(s, 'a', 6) == (const void*)(s + 3));
@@ -54,8 +57,8 @@ static void testMemrchr(void) {
 	TEST_ASSERT(os_memrchr(s, 'a', 0) == NULL);
 	TEST_ASSERT(os_memrchr(s, 'a', 3) == (const void*)s);
 	TEST_ASSERT(os_memrchr(s, 'a', 1) == (const void*)s);
-	TEST_ASSERT(os_memrchr("ab\0c", '\0', 4) == (const void*)&"ab\0c"[2]);
-	TEST_ASSERT(os_memrchr("ab\0c", 'c', 4) == (const void*)&"ab\0c"[3]);
+	TEST_ASSERT(os_memrchr(withNul, '\0', 4) == (const void*)(withNul + 2));
+	TEST_ASSERT(os_memrchr(withNul, 'c', 4) == (const void*)(withNul + 3));
 
 #if defined(__GLIBC__)
 	{

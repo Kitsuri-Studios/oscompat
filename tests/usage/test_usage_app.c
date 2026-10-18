@@ -112,7 +112,7 @@ static void testProcessUsage(void) {
 	int code = -1;
 
 #if OSCOMPAT_WINDOWS
-	const char* argv[] = { "cmd", "/c", "<nul set /p =oscompat", NULL };
+	const char* argv[] = { "cmd", "/c", "<nul set /p =oscompat&exit 0", NULL };
 	const char* failArgv[] = { "cmd", "/c", "exit 3", NULL };
 #else
 	const char* argv[] = { "sh", "-c", "printf oscompat", NULL };
