@@ -1,0 +1,20 @@
+oscompat authors and third party credits
+
+mostafizur
+  oscompat library (2026)
+
+Kitsuri Studio
+  WrapDL library vendored for the dynlib domain (BSD 3 Clause)
+  https://github.com/Kitsuri-Studios/WrapDL
+
+Kelun Cai (caikelun@gmail.com)
+  xDL / HexHacking Team Android dlopen dlsym dl_iterate logic (MIT)
+  https://github.com/hexhacking/xDL
+
+Billy Laws (@bylaws)
+  liblinkernsbypass linker namespace bypass approach (BSD 2 Clause)
+  https://github.com/bylaws/liblinkernsbypass
+
+The Android Open Source Project
+  android_namespace_t layout reference
+  https://source.android.com/

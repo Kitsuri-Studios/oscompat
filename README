@@ -1,0 +1,23 @@
+oscompat is a C library that provides POSIX style helpers on Linux and Windows
+
+POSIX is the reference
+Each platform uses a native backend so the same source behaves the same way
+
+The public header is oscompat.h
+The library is a static archive
+
+Linux and Windows are supported
+macOS is not supported because WrapDL needs Linux ELF interfaces
+
+Notes
+
+Path handling uses the host separator
+On Windows both slash and backslash are accepted
+os_getopt and os_getopt_long follow POSIX getopt
+Scanning stops at the first non option and argv is never permuted
+Failures are reported through the return value and errno
+On Windows os_set_system_error maps the Win32 error code to errno
+Contributions are welcome
+
+See LICENSE
+See AUTHORS
