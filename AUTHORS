@@ -1,9 +1,9 @@
 oscompat authors and third party credits
 
-mostafizur
+Mostafizur Rahman (mostafizur@kitsuri.dev)
   oscompat library (2026)
 
-Kitsuri Studio
+Kitsuri Studio (studio@kitsuri.dev)
   WrapDL library vendored for the dynlib domain (BSD 3 Clause)
   https://github.com/Kitsuri-Studios/WrapDL
 
